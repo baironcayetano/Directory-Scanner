@@ -7,9 +7,7 @@ The main porpuse of this sofware is to provide a simple way to check directories
 This helps a lot when trying to find a file directly from the console.
 Anyone running a server with node.js can install this program.
 
-{Provide a link to your YouTube demonstration.  It should be a one minute demo of the software running and a walkthrough of the code.}
-
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://www.loom.com/share/775e39bc647d4c15a44d0f60cba2600b)
 
 # Development Environment
 - Node.js
