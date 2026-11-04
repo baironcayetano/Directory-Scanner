@@ -1,7 +1,15 @@
+import readline from "readline/promises";
+const {stdin, stdout} = process;
+
+
+const readLine = readline.createInterface({input:stdin, output:stdout});
+
 class Main {
-    public static init():void{
+    public static async init():Promise<void>{
+       const name = await readLine.question("What is your name?");
+        console.log(`Hello ${name}! Welcome to this project!`)
         console.log("Hello world from typescript");
-        console.log("My name is Bairon Cayetano and this is my new project!");
+        process.exit(0);
     }
 }
 

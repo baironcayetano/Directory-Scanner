@@ -17,7 +17,7 @@
     "url": "git+https://github.com/baironcayetano/Directory-Scanner.git"
   },
   "author": "baironcayetano",
-  "type": "commonjs",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx --watch src/index.ts",
