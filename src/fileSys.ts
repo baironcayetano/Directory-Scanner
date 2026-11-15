@@ -3,12 +3,13 @@ import FileTree, { FileNode } from "./tree.js";
 import type { Dirent } from "node:fs";
 
 class FileSystem {
-	private path:string = "./";
+	private path:string;
 	private tree:FileTree;
 	private nodes: Map<string, FileNode> = new Map();
-	
-	constructor(path?:string){
-		if(path) this.path = path;
+	public subdirectories:Dirent[] = [];
+
+	constructor(path:string){
+		this.path = path;
 		this.tree = new FileTree(this.path);
 	}
 
@@ -16,10 +17,20 @@ class FileSystem {
 		this.path = path;
 	}
 
+	public async readSubdirectories(){
+		this.subdirectories = [];
+		const entries = await readdir(this.tree.root.path, { withFileTypes:true})
+		for(const entry of entries){
+			if(entry.isDirectory()){
+			   this.subdirectories.push(entry);
+			}
+		}
+	}
+
 	public async readDirRecursive():Promise<void>{
 		this.tree = new FileTree(this.path);
 		this.nodes.clear();
-		
+
 		try{
 			this.nodes.set(this.tree.root.path, this.tree.root)
 			const entries = await readdir(this.tree.root.path, { withFileTypes: true, recursive:true });
@@ -37,8 +48,8 @@ class FileSystem {
 
 	}
 
-	public displayDirRecursive():void{
-		this.tree.walk();
+	public treeLines():string[]{
+		return this.tree.toLines();
 	}
 
 }

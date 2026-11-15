@@ -1,4 +1,5 @@
 import type { Dirent } from "node:fs";
+import path from "node:path";
 
 type DirentType = "directory" | "file" | "simbolic-Link";
 
@@ -17,7 +18,8 @@ export class FileNode{
     }
 
     public add(child:Dirent):FileNode{
-        const childNode = new FileNode(`${child.name}`, child);
+        const childPath = path.join(child.parentPath, child.name);
+        const childNode = new FileNode(childPath, child);
         this.children.push(childNode);
         return childNode;
     }
@@ -46,18 +48,20 @@ class FileTree {
         this.root = new FileNode(rootPath, null);
     }
 
-    public walk(node: FileNode = this.root, depth = 0): void {
-        if(!node.isRoot()){
-            const subDirectory = depth > 1;
-            const line = "_";
-            const space = " ";
-            const style = subDirectory ? space.repeat(depth+1) + "|" + line : "|"+line.repeat(depth+1); 
-                           
-            console.log(
-                style, `${node.entry?.name ?? " "+node.path}`
-            );
+    public toLines(node: FileNode = this.root, depth = 0, lines: string[] = []): string[] {
+        //stop at depth = 2
+        if(depth > 2){
+            return lines;
         }
-        node.children.forEach(c => this.walk(c, depth + 1));
+
+        if(!node.isRoot()){
+            const SPACE = " ";
+            const indent = SPACE.repeat(depth);
+            lines.push(`${indent}|_${node.entry?.name ?? node.path}`);
+        }
+
+        node.children.forEach(child => {this.toLines(child, depth + 1, lines)});
+        return lines;
     }
 }
 

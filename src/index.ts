@@ -1,42 +1,40 @@
+import path from "node:path";
 import FileSystem from "./fileSys.js";
 import Input from "./input.js";
 
 class Main {
-    public static async init():Promise<void>{
-       const input = new Input();
-       
-       let exit = false;
-       let dir = "./";
-       let fileSystem = null;
-       while (!exit) {
-            console.log("Press <Enter> to chose the current directory");
-            console.log("Type <close> or press 'Ctl+C' to close this program")
-            const response = (await input.text("Enter directory: ")).trim();
+    public static async init(): Promise<void> {
+        const input = new Input();
+        let dir = process.cwd();
+        const fileSystem = new FileSystem(dir);
 
-            if(response === "close"){
-                exit = true;
-                break;
-            }
-
-            if(response.length > 0){
-                dir = response;
-            }
-
-            if(!fileSystem) { fileSystem = new FileSystem(dir); }
-            else{ await fileSystem.changeDir(dir); }
-
+        while (true) {
+            await fileSystem.changeDir(dir);
             await fileSystem.readDirRecursive();
-            fileSystem.displayDirRecursive();
-       }
+            await fileSystem.readSubdirectories();
 
-       process.exit();
-       //const dir = await input.text("Enter directory: ");
-	   //const fileSystem = new FileSystem(dir);
-	   //await fileSystem.ReadDir();
-       //fileSystem.DisplayDir();
+            const parentOption = `.. ${path.dirname(dir)}`;
+            const options = [
+                ...(path.dirname(dir) !== dir ? [parentOption] : []),
+                ...fileSystem.subdirectories.map((entry) => entry.name),
+            ];
 
-       //input.listenKeyBoard();
-		        
+            const choice = await input.select(
+                options, 
+                `Current Folder: ${dir}`, 
+                fileSystem.treeLines()
+            );
+            
+            if (choice === parentOption) {
+                dir = path.dirname(dir);
+                continue;
+            }
+
+            else if(choice){
+                dir = path.resolve(dir, choice);
+            }
+            
+        }
     }
 }
 
