@@ -6,17 +6,6 @@ type Key = {
     ctrl: boolean;
 }
 
-const KeyEventHandler = (_:any, key:any) => {
-    if (key.ctrl && key.name === "c") process.exit(); // en modo raw Ctrl+C ya no sale solo
-    if (key.name === "q") process.exit();
-    //teclas de cursor
-    if (key.name === "up") stdout.moveCursor(0,-1); 
-    if (key.name === "down") stdout.moveCursor(0, 1);
-    if (key.name === "left") stdout.moveCursor(-1, 0);
-    if (key.name === "right") stdout.moveCursor(1,0);
-    if (key.name === "return") console.log("enter");
-}
-
 export default class Input{
 
     constructor(){
