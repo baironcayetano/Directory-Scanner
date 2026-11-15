@@ -27,11 +27,11 @@ export default class Input{
             let selected = 0;
 
             const render = () => {
+            	stdout.write("\x1b[2J\x1b[H");
                 stdout.write(`\n${title}\n\n`);
                 stdout.write("======= CONTENT =======");
                 lines.forEach(line => stdout.write(`\n${line}`));
-                stdout.write("\x1b[2J\x1b[H");
-                stdout.write(`\n[ OPEN ]\n`)
+                stdout.write(`\n\n[ OPEN ]\n`)
                 options.forEach((option, i) => {
                     stdout.write(`${i === selected ? "=> " : " "}${option}\n`);
                 });
