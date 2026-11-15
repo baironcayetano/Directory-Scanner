@@ -1,15 +1,42 @@
-import readline from "readline/promises";
-const {stdin, stdout} = process;
-
-
-const readLine = readline.createInterface({input:stdin, output:stdout});
+import FileSystem from "./fileSys.js";
+import Input from "./input.js";
 
 class Main {
     public static async init():Promise<void>{
-       const name = await readLine.question("What is your name?");
-        console.log(`Hello ${name}! Welcome to this project!`)
-        console.log("Hello world from typescript");
-        process.exit(0);
+       const input = new Input();
+       
+       let exit = false;
+       let dir = "./";
+       let fileSystem = null;
+       while (!exit) {
+            console.log("Press <Enter> to chose the current directory");
+            console.log("Type <close> or press 'Ctl+C' to close this program")
+            const response = (await input.text("Enter directory: ")).trim();
+
+            if(response === "close"){
+                exit = true;
+                break;
+            }
+
+            if(response.length > 0){
+                dir = response;
+            }
+
+            if(!fileSystem) { fileSystem = new FileSystem(dir); }
+            else{ await fileSystem.changeDir(dir); }
+
+            await fileSystem.readDirRecursive();
+            fileSystem.displayDirRecursive();
+       }
+
+       process.exit();
+       //const dir = await input.text("Enter directory: ");
+	   //const fileSystem = new FileSystem(dir);
+	   //await fileSystem.ReadDir();
+       //fileSystem.DisplayDir();
+
+       //input.listenKeyBoard();
+		        
     }
 }
 
