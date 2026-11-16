@@ -3,9 +3,13 @@ import FileTree, { FileNode } from "./tree.js";
 import type { Dirent } from "node:fs";
 
 class FileSystem {
+	//path of the given directory/file
 	private path:string;
+	//tree representing the file system of the current directory/file
 	private tree:FileTree;
+	//This HashMap allows us to insert a nodes in its parent's children list 
 	private nodes: Map<string, FileNode> = new Map();
+	//List to represent all the subdirectories of the current directory
 	public subdirectories:Dirent[] = [];
 
 	constructor(path:string){
@@ -13,10 +17,12 @@ class FileSystem {
 		this.tree = new FileTree(this.path);
 	}
 
+	/** Allows to set a new directory path */
 	public async changeDir(path:string):Promise<void>{
 		this.path = path;
 	}
 
+	/** Reads the subdirectories and inserts them in the list**/
 	public async readSubdirectories(){
 		this.subdirectories = [];
 		const entries = await readdir(this.tree.root.path, { withFileTypes:true})
@@ -27,6 +33,8 @@ class FileSystem {
 		}
 	}
 
+	/** Reads the current directory using recursion and inserts each node
+	 *  in the tree */
 	public async readDirRecursive():Promise<void>{
 		this.tree = new FileTree(this.path);
 		this.nodes.clear();
@@ -48,6 +56,8 @@ class FileSystem {
 
 	}
 
+	/** Calls `toLines()` of the root node return a list of strings 
+	 * in which each string represents a file or a folder */
 	public treeLines():string[]{
 		return this.tree.toLines();
 	}
